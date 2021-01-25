@@ -11,9 +11,18 @@ var getUserRepos = function(user){
 
     //make a request to the URL
     fetch(apiUrl).then(function(response){
+        //request was successful
+        if (response.ok) {
         response.json().then(function(data){
             displayRepos(data, user);
         });
+    } else {
+        alert("Error: Not Found");
+    }
+    })
+    .catch(function(error){
+        //Notice this '.catch' getting chained onto the end of the '.then.
+        alert("Unable to connect to GitHub");
     });
 };
 
@@ -36,6 +45,12 @@ userFormEl.addEventListener("submit", formSubmitHandler);
 var displayRepos = function(repos, searchTerm){
     repoContainerEl.textContent = "";
     repoSearchTerm.textContent = searchTerm;
+
+    //check if api returned any repos
+    if (repos.length === 0) {
+        repoContainerEl.textContent = "No repositories found.";
+        return;
+    }
 
     //loop over repos
     for (var i = 0; i < repos.length; i++) {
@@ -64,6 +79,8 @@ var displayRepos = function(repos, searchTerm){
         } else {
             statusEl.innerHTML = "<i class='fas fa-check-square status-icon icon-success'></i>";
         }
+        //append to container
+        repoEl.appendChild(statusEl);
 
         //append containter to the DOM
         repoContainerEl.appendChild(repoEl);
